@@ -29,7 +29,7 @@ const Feed = () => {
       </div>
       <Input />
       {posts.map((post) => (
-        <Post key={post.data().id} post={post} />
+        <Post key={post.id} id={post.id} post={post} />
       ))}
     </div>
   );
