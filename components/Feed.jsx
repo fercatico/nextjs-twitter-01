@@ -1,31 +1,23 @@
 import { SparklesIcon } from "@heroicons/react/24/outline";
-import React from "react";
+import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
+import React, { useEffect, useState } from "react";
+import { db } from "../firebase";
 import Input from "./Input";
 import Post from "./Post";
 
 const Feed = () => {
-  const posts = [
-    {
-      id: "1",
-      name: "Miguel Fernandez",
-      username: "fercatico",
-      userImg:
-        "https://miguelfernandezcampos.netlify.app/static/media/profile-me.eb956e776aecf778c968.jpg",
-      img: "https://images.unsplash.com/photo-1666009812623-31fb98d10579?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1174&q=80",
-      text: "nice view!",
-      timestamp: "2 hours ago",
-    },
-    {
-      id: "2",
-      name: "Miguel Fernandez",
-      username: "fercatico",
-      userImg:
-        "https://miguelfernandezcampos.netlify.app/static/media/profile-me.eb956e776aecf778c968.jpg",
-      img: "https://images.unsplash.com/photo-1666107677986-c264fc8f908e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
-      text: "Wow!",
-      timestamp: "2 days ago",
-    },
-  ];
+  const [posts, setPosts] = useState([]);
+
+  useEffect(
+    () =>
+      onSnapshot(
+        query(collection(db, "posts"), orderBy("timestamp", "desc")),
+        (snapshot) => {
+          setPosts(snapshot.docs);
+        }
+      ),
+    []
+  );
 
   return (
     <div className="xl:ml-[370px] border-l border-r border-gray-200 xl:min-w-[576px] sm:ml-[73px] flex-grow max-w-xl">
@@ -37,7 +29,7 @@ const Feed = () => {
       </div>
       <Input />
       {posts.map((post) => (
-        <Post key={post.id} post={post} />
+        <Post key={post.data().id} post={post} />
       ))}
     </div>
   );

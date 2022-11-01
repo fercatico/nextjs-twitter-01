@@ -80,7 +80,7 @@ const Input = () => {
             {selectedFile && (
               <div className="relative">
                 <XMarkIcon
-                  className="h-7 text-black absolute cursor-pointer shadow-sm shadow-white rounded-full bg-red-200 border-x-2 border-red p-1 m-1"
+                  className="h-7 text-black absolute cursor-pointer rounded-full bg-white border-x-2 border border-white p-1 m-1"
                   onClick={() => setSelectedFile(null)}
                 />
                 <img src={selectedFile} className={`${loading && "animate-pulse"}`} alt="" />
