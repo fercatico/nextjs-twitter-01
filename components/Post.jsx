@@ -54,7 +54,9 @@ const Post = ({ post, id }) => {
 
   const deletePost = async () => {
     deleteDoc(doc(db, "posts", post.id));
-    deleteObject(ref(storage, `posts/${post.id}/image`));
+    if(post.data().image) {
+      deleteObject(ref(storage, `posts/${post.id}/image`));
+    }
   };
 
   return (
