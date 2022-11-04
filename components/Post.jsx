@@ -19,11 +19,14 @@ import {
 import { db, storage } from "../firebase";
 import { signIn, useSession } from "next-auth/react";
 import { deleteObject, ref } from "firebase/storage";
+import { useRecoilState } from "recoil";
+import { modalState } from "../atom/modalAtom";
 
 const Post = ({ post, id }) => {
   const { data: session } = useSession();
   const [likes, setLikes] = useState([]);
   const [hasLiked, setHasLiked] = useState(false);
+  const [open, setOpen] = useRecoilState(modalState);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(
@@ -54,7 +57,7 @@ const Post = ({ post, id }) => {
 
   const deletePost = async () => {
     deleteDoc(doc(db, "posts", post.id));
-    if(post.data().image) {
+    if (post.data().image) {
       deleteObject(ref(storage, `posts/${post.id}/image`));
     }
   };
@@ -98,7 +101,10 @@ const Post = ({ post, id }) => {
         />
         {/*Icons*/}
         <div className="flex items-center justify-between text-gray-500 p-2">
-          <ChatBubbleOvalLeftEllipsisIcon className="h-9 w-9 hoverEffect p-2 hover:text-sky-500 hover:bg-sky-100" />
+          <ChatBubbleOvalLeftEllipsisIcon
+            onClick={() => setOpen(!open)}
+            className="h-9 w-9 hoverEffect p-2 hover:text-sky-500 hover:bg-sky-100"
+          />
           {session?.user.uid === post?.data().id && (
             <TrashIcon
               onClick={deletePost}
