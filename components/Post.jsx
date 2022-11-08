@@ -21,6 +21,7 @@ import { signIn, useSession } from "next-auth/react";
 import { deleteObject, ref } from "firebase/storage";
 import { useRecoilState } from "recoil";
 import { modalState, postIdState } from "../atom/modalAtom";
+import { useRouter } from "next/router";
 
 const Post = ({ post, id }) => {
   const { data: session } = useSession();
@@ -29,6 +30,7 @@ const Post = ({ post, id }) => {
   const [hasLiked, setHasLiked] = useState(false);
   const [open, setOpen] = useRecoilState(modalState);
   const [postId, setPostId] = useRecoilState(postIdState);
+  const router = useRouter();
 
   useEffect(() => {
     const unsubscribe = onSnapshot(
@@ -69,6 +71,7 @@ const Post = ({ post, id }) => {
     if (post.data().image) {
       deleteObject(ref(storage, `posts/${post.id}/image`));
     }
+    router.push("/");
   };
 
   return (
@@ -76,7 +79,7 @@ const Post = ({ post, id }) => {
       {/*Image*/}
       <img
         className="h-11 w-11 rounded-full mr-4"
-        src={post.data().userImg}
+        src={post?.data()?.userImg}
         alt="user-img"
       />
       {/*Right Side*/}
@@ -86,13 +89,13 @@ const Post = ({ post, id }) => {
           {/*Post User Info*/}
           <div className="flex items-center justify-between space-x-1 whitespace-nowrap ">
             <h4 className="font-bold text-[14px] sm:text-[16px] hover:underline">
-              {post.data().name}
+              {post?.data()?.name}
             </h4>
             <span className="text-sm sm:text-[13px]">
-              @{post.data().username} -{" "}
+              @{post?.data()?.username} -{" "}
             </span>
             <span className="text-sm sm:text-[12px] hover:underline">
-              <Moment fromNow>{post?.data().timestamp?.toDate()}</Moment>
+              <Moment fromNow>{post?.data()?.timestamp?.toDate()}</Moment>
             </span>
           </div>
           {/*Dot Icon*/}
@@ -100,12 +103,12 @@ const Post = ({ post, id }) => {
         </div>
         {/*Post Text*/}
         <p className="text-gray-800 text-[15px] sm:text-[16px] mb-2">
-          {post.data().text}
+          {post?.data()?.text}
         </p>
         {/*Post Image*/}
         <img
           className="rounded-2xl mr-2"
-          src={post.data().image}
+          src={post?.data()?.image}
           alt="post-img"
         />
         {/*Icons*/}
@@ -122,9 +125,11 @@ const Post = ({ post, id }) => {
               }}
               className="h-9 w-9 hoverEffect p-2 hover:text-sky-500 hover:bg-sky-100"
             />
-            {comments.length > 0 && <span className="text-sm">{comments.length}</span>}
+            {comments.length > 0 && (
+              <span className="text-sm">{comments.length}</span>
+            )}
           </div>
-          {session?.user.uid === post?.data().id && (
+          {session?.user.uid === post?.data()?.id && (
             <TrashIcon
               onClick={deletePost}
               className="h-9 w-9 hoverEffect p-2 hover:text-red-600 hover:bg-red-100 "
